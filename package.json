@@ -17,6 +17,6 @@
   },
   "scripts": {
     "test": "jest --watchAll",
-    "start:dataTypes": "nodemon dataTypes.js"
+    "start": "nodemon pigLatin.js"
   }
 }
