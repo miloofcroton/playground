@@ -30,12 +30,12 @@ const _256 = new Decimal(2**8);
 
 type SerializedNumber = string;
 
-type DeserializedNumber = {
+export type DeserializedNumber = {
   significand: Uint8Array,
   exponent: number,
 }
 
-const deserialize = ({
+export const deserialize = ({
   significand,
   exponent,
 }: DeserializedNumber): SerializedNumber => {
@@ -56,7 +56,7 @@ const deserialize = ({
 }
 
 /** Undoes what deserialize does */
-const serialize = (
+export const serialize = (
   value: SerializedNumber
 ): DeserializedNumber => {
   // log(value, 'value');
@@ -65,8 +65,12 @@ const serialize = (
   // revert back to uintarray
 
   let resultsArr = [];
-  let decimal = new Decimal(value);
-  let exponent = 0;
+  const {
+    significand,
+    exponent,
+  } = normalize(value);
+  let decimal = new Decimal(significand);
+  // let exponent = 0;
 
   while(decimal.comparedTo(zero) > 0) {
     let modulus = decimal.mod(_256);
@@ -83,11 +87,11 @@ const serialize = (
 
   return {
     significand: tempArray,
-    exponent: exponent,
+    exponent: parseInt(exponent),
   };
 }
 
-export const normalizeNumber = (value: string): {
+export const normalize = (value: string): {
   significand: string,
   exponent: string,
 }  => {
@@ -120,7 +124,7 @@ const emptyArray = Array(2).fill({})
 
 const posArray: DeserializedNumber[] = emptyArray
   .map((el, i) => ({
-    significand: new Uint8Array([1, 0]),
+    significand: new Uint8Array([255, 255, 1]),
     // significand: new Uint8Array([255, 255]),
     exponent: i,
   }))
@@ -147,9 +151,9 @@ const serializedData = deserializedData
 // log(origData[0])
 // log(deserializedData[0])
 // log(serializedData[0])
-// log(origData[1])
+log(origData[1])
 // log(deserializedData[1])
-// log(serializedData[1])
+log(serializedData[1])
 
 // origData.map((el, i) => {
 //   log(origData[i])
