@@ -88,15 +88,30 @@ const serialize = (
 }
 
 export const normalizeNumber = (value: string): DeserializedNumber  => {
+  let exponent;
+  let significand;
   const splitted = value.split('.');
+
+  // if no splitted[1]
+  // count zeroes
+
+  if (splitted.length === 1) {
+    const firstNonZeroIndex = splitted[0]
+      .split('')
+      .reverse()
+      .findIndex(char => char !== '0')
+
+    exponent = new Decimal(firstNonZeroIndex);
+    const base = new Decimal(ten).pow(exponent)
+    significand = new Decimal(splitted[0]).div(base);
+  }
 
   // if splitted[1]:
   // check if parseInt(splitted[1]) > 0
 
-
   return {
-    significand: new Uint8Array([0]),
-    exponent: 0,
+    significand: new Uint8Array([parseInt(significand)]),
+    exponent: parseInt(exponent),
   };
 }
 
