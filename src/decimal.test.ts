@@ -6,22 +6,21 @@ import {
   DeserializedNumber,
 } from './decimal';
 
-// make this work for numbers larger than 14!
-const emptyArray = Array(14).fill({});
-const posArray: DeserializedNumber[] = emptyArray
-  .map((el, i) => ({
-    significand: new Uint8Array([255, 255]),
-    exponent: i,
-  }));
-const negArray: DeserializedNumber[] = emptyArray
-  .map((el, i) => ({
-    significand: new Uint8Array([255, 255, 1]),
-    exponent: i === 0 ? 0 : -i,
-  }));
+const createArr = (length) => Array(length).fill({});
 
-const mockData = [
-  ...posArray,
-  ...negArray,
+const createPos = (el, i): DeserializedNumber => ({
+  significand: new Uint8Array([255, 255]),
+  exponent: i,
+});
+
+const createNeg = (el, i): DeserializedNumber => ({
+  significand: new Uint8Array([255, 255]),
+  exponent: i === 0 ? 0 : -i,
+});
+
+const createMockData = (length) => [
+  ...createArr(length).map(createPos),
+  ...createArr(length).map(createNeg),
 ];
 
 describe('decimal', () => {
@@ -89,6 +88,7 @@ describe('decimal', () => {
 
   describe('deserialize', () => {
     test('deserialize returns string number', () => {
+      const mockData = createMockData(20);
       const deserializedData = mockData
         .map(deserialize);
 
@@ -99,7 +99,9 @@ describe('decimal', () => {
   });
 
   describe('serialize', () => {
-    test('can deserialize then serialize', () => {
+    test('can deserialize then serialize up to 10, including numbers less than 0.1', () => {
+      const mockData = createMockData(10);
+
       const serializedData = mockData
         .map(deserialize)
         .map(serialize);
@@ -107,6 +109,15 @@ describe('decimal', () => {
       serializedData.map((el, i) => {
         expect(el).toEqual(mockData[i]);
       });
+    });
+    test('can deserialize then serialize index 17 of the mock data', () => {
+      const mockData = createMockData(20);
+
+      const serializedData = [mockData[17]]
+        .map(deserialize)
+        .map(serialize);
+
+      expect(serializedData[0]).toEqual(mockData[17]);
     });
   });
 

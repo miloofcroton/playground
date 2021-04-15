@@ -59,13 +59,14 @@ export const serialize = (
     significand,
     exponent,
   } = normalize(value);
-  let decimal = new Decimal(significand);
 
   log(
     value,
     significand,
     exponent,
   );
+
+  let decimal = new Decimal(significand);
 
   while (decimal.comparedTo(zero) > 0) {
     const modulus = decimal.mod(_256);
