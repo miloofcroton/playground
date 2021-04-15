@@ -1,5 +1,8 @@
 module.exports = {
   root: true,
+	ignore: [
+		'.eslintrc.js'
+	],
   extends: [
 		'eslint:recommended',
 		// 'plugin:react/recommended',
@@ -17,12 +20,12 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.eslint.json',
-    createDefaultProgram: false,
-		sourceType: 'module',
-		ecmaVersion: 2018,
-		ecmaFeatures: {
-			jsx: true
-		}
+    // createDefaultProgram: false,
+		// sourceType: 'module',
+		// ecmaVersion: 2018,
+		// ecmaFeatures: {
+		// 	jsx: true
+		// }
   },
   env: {
     node: true,
