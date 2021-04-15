@@ -46,8 +46,6 @@ export const deserialize = ({
         .add(new Decimal(curr))
     }, zero)
 
-  65535
-
   const magnitude = ten.pow(exponent);
 
   return fullSignificand
