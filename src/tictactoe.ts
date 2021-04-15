@@ -13,17 +13,22 @@
 const getRandomInt = (max) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
+const getRandomArr = arr => arr.sort((a, b) => {
+  const randInt = getRandomInt(1)
+  if (randInt) return 1
+  else return -1;
+})
 
 const horizontalWins = [
-  [0,1,2], [3,4,5], [6,7,8]
+  [0, 1, 2], [3, 4, 5], [6, 7, 8]
 ]
 
 const verticalWins = [
-  [0,3,6], [1,4,7], [2,5,8]
+  [0, 3, 6], [1, 4, 7], [2, 5, 8]
 ]
 
 const diagonalWins = [
-  [0,4,8], [2,4,6]
+  [0, 4, 8], [2, 4, 6]
 ]
 const allWins = [
   ...horizontalWins,
@@ -31,10 +36,16 @@ const allWins = [
   ...diagonalWins,
 ]
 
+const positionHierarchy = [
+  ...[4],
+  ...getRandomArr([0, 2, 6, 8]),
+  ...getRandomArr([1, 3, 5, 7])
+]
+
 const sides = ['X', 'O']
 const getOppSide = side => sides.find(el => el !== side)
 
-const checkWin = (status, side) => {
+const checkForWin = (status, side) => {
   const oppSide = getOppSide(side)
   const goodSide = status.filter(space => space === side)
   const badSide = status.filter(space => space === oppSide)
@@ -54,11 +65,11 @@ const checkForPending = (board, side) => {
       ]
     }))
 
-  const hasWin = winMap.some(el => checkWin(el.status, side))
+  const hasWin = winMap.some(el => checkForWin(el.status, side))
 
   // return truthy, with a move
   if (hasWin) {
-    const wins = winMap.filter(el => checkWin(el.status, side))
+    const wins = winMap.filter(el => checkForWin(el.status, side))
     const randWinNum = getRandomInt(wins.length)
     const randWin = wins[randWinNum]
 
@@ -69,18 +80,6 @@ const checkForPending = (board, side) => {
   }
   else return false
 }
-
-const randomizeArray = arr => arr.sort((a, b) => {
-  const randInt = getRandomInt(1)
-  if (randInt) return 1
-  else return -1;
-})
-
-const positionHierarchy = [
-  ...[4],
-  ...randomizeArray([0,2,6,8]),
-  ...randomizeArray([1,3,5,7])
-]
 
 // returns index of move
 export const solveTTT = (board) => {

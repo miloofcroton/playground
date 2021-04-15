@@ -2,11 +2,12 @@ import {
   normalize,
   serialize,
   deserialize,
+  trimLeadingZeroes,
   DeserializedNumber,
 } from './decimal'
 
-// make this work for numbers larger than 9!
-const emptyArray = Array(10).fill({})
+// make this work for numbers larger than 14!
+const emptyArray = Array(14).fill({})
 const posArray: DeserializedNumber[] = emptyArray
   .map((el, i) => ({
     significand: new Uint8Array([255, 255]),
@@ -23,7 +24,7 @@ const mockData = [
   ...negArray,
 ]
 
-xdescribe('decimal', () => {
+describe('decimal', () => {
 
   describe('normalize', () => {
     test('10', () => {
@@ -76,6 +77,14 @@ xdescribe('decimal', () => {
     })
 
 
+    test('0.01', () => {
+      expect(normalize('0.01')).toEqual({
+        significand: '1',
+        exponent: '-2',
+      });
+    })
+
+
   })
 
   describe('deserialize', () => {
@@ -91,16 +100,22 @@ xdescribe('decimal', () => {
 
   describe('serialize', () => {
     test('can deserialize then serialize', () => {
-      const deserializedData = mockData
-        .map(deserialize)
       const serializedData = mockData
         .map(deserialize)
         .map(serialize)
 
-      mockData.map((el, i) => {
-        expect(el).toEqual(serializedData[i])
+      serializedData.map((el, i) => {
+        expect(el).toEqual(mockData[i])
       })
     })
   })
 
+  describe('trimLeadingZeroes', () => {
+    test('100', () => {
+      expect(trimLeadingZeroes('100')).toEqual('100')
+    })
+    test('0100', () => {
+      expect(trimLeadingZeroes('0100')).toEqual('100')
+    })
+  })
 })

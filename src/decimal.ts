@@ -1,7 +1,6 @@
 import { Decimal } from 'decimal.js';
 import 'fast-text-encoding';
-import { off } from 'node:process';
-
+import { stringify } from 'node:querystring';
 
 /*
 Terms:
@@ -63,6 +62,12 @@ export const serialize = (
   } = normalize(value);
   let decimal = new Decimal(significand);
 
+  log(
+    value,
+    significand,
+    exponent,
+  )
+
   while(decimal.comparedTo(zero) > 0) {
     let modulus = decimal.mod(_256);
     let modulusNum = new Number(modulus.toString());
@@ -82,6 +87,14 @@ export const serialize = (
   };
 }
 
+export const trimLeadingZeroes = (value: string): string => {
+  const firstNonZero = value
+    .split('')
+    .findIndex(char => char !== '0')
+
+  return value.slice(firstNonZero)
+}
+
 export const normalize = (value: string): {
   significand: string,
   exponent: string,
@@ -89,19 +102,23 @@ export const normalize = (value: string): {
   const origNum = new Decimal(value);
   const sigDigs = origNum.precision();
   const [whole, frac] = value.split('.');
+  const isGreaterThanOne = parseFloat(value) > 1;
+  const trimmedFrac = !isGreaterThanOne
+    ? trimLeadingZeroes(frac)
+    : frac;
 
   const newNumChars = value
     .split('')
     .filter(char => char !== '.')
 
-  const significand = parseFloat(value) > 1
+  const significand = isGreaterThanOne
     ? newNumChars.slice(0, sigDigs).join('')
-    : frac.split('').slice(0, sigDigs).join('')
+    : trimmedFrac.split('').slice(0, sigDigs).join('')
 
   const originalDecimalLocation = whole.length || 0;
-  const decimalLocationChange = parseFloat(value) > 1
+  const decimalLocationChange = isGreaterThanOne
     ? originalDecimalLocation - significand.length
-    : originalDecimalLocation - significand.concat(whole).length;
+    : originalDecimalLocation - significand.concat(whole).length - frac.length + trimmedFrac.length;
 
   const exponent = decimalLocationChange.toString()
 
