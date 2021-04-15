@@ -1,20 +1,7 @@
 import { Decimal } from 'decimal.js';
 import 'fast-text-encoding';
 
-/*
-Terms:
-
-floating point number = number expressed similarly to scientific notation
-significand = significant digits
-exponent = exponent
-base = number base
-
-123.45 = 12345 × 10^2.
-floating point number = significand × base ^ exponent
-
-*/
-
-const { log } = console;
+const PRECISION = 60;
 
 Decimal.set({
   precision: 200,
@@ -48,7 +35,7 @@ export const serialize = ({
 
   return fullSignificand
     .mul(magnitude)
-    .toString();
+    .toPrecision(PRECISION);
 };
 
 export const deserialize = (
@@ -59,12 +46,6 @@ export const deserialize = (
     significand,
     exponent,
   } = normalize(value);
-
-  log(
-    value,
-    significand,
-    exponent,
-  );
 
   let decimal = new Decimal(significand);
 
