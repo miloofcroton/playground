@@ -23,7 +23,13 @@ const createMockData = (length) => [
   ...createArr(length).map(createNeg),
 ];
 
+
 describe('decimal', () => {
+  let allMockData;
+
+  beforeAll(() => {
+    allMockData = createMockData(60);
+  });
 
   describe('normalize', () => {
     test('10', () => {
@@ -99,8 +105,9 @@ describe('decimal', () => {
   });
 
   describe('serialize', () => {
+
     test('can deserialize then serialize up to 10, including numbers less than 0.1', () => {
-      const mockData = createMockData(10);
+      const mockData = allMockData.slice(0,10);
 
       const serializedData = mockData
         .map(deserialize)
@@ -110,14 +117,14 @@ describe('decimal', () => {
         expect(el).toEqual(mockData[i]);
       });
     });
-    test('can deserialize then serialize index 17 of the mock data', () => {
-      const mockData = createMockData(20);
+    test('can deserialize then serialize index 17 of the mock data, including numbers with e', () => {
+      const mockData = allMockData[17];
 
-      const serializedData = [mockData[17]]
+      const serializedData = [mockData]
         .map(deserialize)
         .map(serialize);
 
-      expect(serializedData[0]).toEqual(mockData[17]);
+      expect(serializedData[0]).toEqual(mockData);
     });
   });
 
