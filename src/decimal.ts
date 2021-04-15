@@ -1,6 +1,5 @@
 import { Decimal } from 'decimal.js';
 import 'fast-text-encoding';
-import { stringify } from 'node:querystring';
 
 /*
 Terms:
@@ -20,7 +19,7 @@ const { log } = console;
 Decimal.set({
   precision: 200,
   rounding: 0
-})
+});
 
 const zero = new Decimal(0);
 const one = new Decimal(1);
@@ -30,8 +29,8 @@ const _256 = new Decimal(2**8);
 type SerializedNumber = string;
 
 export type DeserializedNumber = {
-  significand: Uint8Array,
-  exponent: number,
+  significand: Uint8Array;
+  exponent: number;
 }
 
 export const deserialize = ({
@@ -42,20 +41,20 @@ export const deserialize = ({
     .reduce((acc, curr, i) => {
       return acc
         .mul(_256)
-        .add(new Decimal(curr))
-    }, zero)
+        .add(new Decimal(curr));
+    }, zero);
 
   const magnitude = ten.pow(exponent);
 
   return fullSignificand
     .mul(magnitude)
     .toString();
-}
+};
 
 export const serialize = (
   value: SerializedNumber
 ): DeserializedNumber => {
-  let resultsArr = [];
+  const resultsArr = [];
   const {
     significand,
     exponent,
@@ -66,11 +65,11 @@ export const serialize = (
     value,
     significand,
     exponent,
-  )
+  );
 
-  while(decimal.comparedTo(zero) > 0) {
-    let modulus = decimal.mod(_256);
-    let modulusNum = new Number(modulus.toString());
+  while (decimal.comparedTo(zero) > 0) {
+    const modulus = decimal.mod(_256);
+    const modulusNum = new Number(modulus.toString());
 
     resultsArr.push(modulusNum);
     decimal = decimal
@@ -85,19 +84,19 @@ export const serialize = (
     significand: tempArray,
     exponent: parseInt(exponent),
   };
-}
+};
 
 export const trimLeadingZeroes = (value: string): string => {
   const firstNonZero = value
     .split('')
-    .findIndex(char => char !== '0')
+    .findIndex(char => char !== '0');
 
-  return value.slice(firstNonZero)
-}
+  return value.slice(firstNonZero);
+};
 
 export const normalize = (value: string): {
-  significand: string,
-  exponent: string,
+  significand: string;
+  exponent: string;
 }  => {
   const origNum = new Decimal(value);
   const sigDigs = origNum.precision();
@@ -109,21 +108,21 @@ export const normalize = (value: string): {
 
   const newNumChars = value
     .split('')
-    .filter(char => char !== '.')
+    .filter(char => char !== '.');
 
   const significand = isGreaterThanOne
     ? newNumChars.slice(0, sigDigs).join('')
-    : trimmedFrac.split('').slice(0, sigDigs).join('')
+    : trimmedFrac.split('').slice(0, sigDigs).join('');
 
   const originalDecimalLocation = whole.length || 0;
   const decimalLocationChange = isGreaterThanOne
     ? originalDecimalLocation - significand.length
     : originalDecimalLocation - significand.concat(whole).length - frac.length + trimmedFrac.length;
 
-  const exponent = decimalLocationChange.toString()
+  const exponent = decimalLocationChange.toString();
 
   return {
     significand: significand,
     exponent: exponent,
   };
-}
+};
