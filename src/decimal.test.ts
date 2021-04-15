@@ -5,36 +5,25 @@ import {
   DeserializedNumber,
 } from './decimal'
 
+// make this work for numbers larger than 9!
+const emptyArray = Array(9).fill({})
+const posArray: DeserializedNumber[] = emptyArray
+  .map((el, i) => ({
+    significand: new Uint8Array([255, 255]),
+    exponent: i,
+  }))
+const negArray: DeserializedNumber[] = emptyArray
+  .map((el, i) => ({
+    significand: new Uint8Array([255, 255, 1]),
+    exponent: i === 0 ? 0 : -i,
+  }))
+
+const mockData = [
+  ...posArray,
+  ...negArray,
+]
+
 describe('decimal', () => {
-  let deserializedData, serializedData;
-  beforeAll(() => {
-    const emptyArray = Array(2).fill({})
-
-    const posArray: DeserializedNumber[] = emptyArray
-      .map((el, i) => ({
-        significand: new Uint8Array([1, 0]),
-        // significand: new Uint8Array([255, 255]),
-        exponent: i,
-      }))
-
-    const negArray: DeserializedNumber[] = emptyArray
-      .map((el, i) => ({
-        significand: new Uint8Array([255, 255, 1]),
-        exponent: i === 0 ? 0 : -i,
-      }))
-
-
-    const origData = [
-      ...posArray,
-      // ...negArray,
-    ]
-
-    const deserializedData = origData
-      .map(deserialize)
-
-    const serializedData = deserializedData
-      .map(serialize)
-  })
 
   describe('normalize', () => {
     test('10', () => {
@@ -89,11 +78,31 @@ describe('decimal', () => {
 
   })
 
-  // describe('deserialize', () => {
+  describe('deserialize', () => {
+    test('deserialize returns string number', () => {
+      const deserializedData = mockData
+        .map(deserialize)
 
+      deserializedData.map((el) => {
+        expect(parseInt(el)).toEqual(expect.any(Number))
+      })
+    })
+  })
 
+  describe('serialize', () => {
+    test('can deserialize then serialize', () => {
+      const deserializedData = mockData
+        .map(deserialize)
+      const serializedData = mockData
+        .map(deserialize)
+        .map(serialize)
 
-  // })
+      console.log(deserializedData)
 
+      mockData.map((el, i) => {
+        expect(el).toEqual(serializedData[i])
+      })
+    })
+  })
 
 })

@@ -55,22 +55,15 @@ export const deserialize = ({
     .toString();
 }
 
-/** Undoes what deserialize does */
 export const serialize = (
   value: SerializedNumber
 ): DeserializedNumber => {
-  // log(value, 'value');
-  // find exponent if decimal '.'
-  // find exponent if trailing zeros and no decimal.
-  // revert back to uintarray
-
   let resultsArr = [];
   const {
     significand,
     exponent,
   } = normalize(value);
   let decimal = new Decimal(significand);
-  // let exponent = 0;
 
   while(decimal.comparedTo(zero) > 0) {
     let modulus = decimal.mod(_256);
@@ -119,49 +112,3 @@ export const normalize = (value: string): {
     exponent: exponent,
   };
 }
-
-const emptyArray = Array(2).fill({})
-
-const posArray: DeserializedNumber[] = emptyArray
-  .map((el, i) => ({
-    significand: new Uint8Array([255, 255, 1]),
-    // significand: new Uint8Array([255, 255]),
-    exponent: i,
-  }))
-
-const negArray: DeserializedNumber[] = emptyArray
-  .map((el, i) => ({
-    significand: new Uint8Array([255, 255, 1]),
-    exponent: i === 0 ? 0 : -i,
-  }))
-
-
-const origData = [
-  ...posArray,
-  // ...negArray,
-]
-
-const deserializedData = origData
-  .map(deserialize)
-
-const serializedData = deserializedData
-  .map(serialize)
-
-
-// log(origData[0])
-// log(deserializedData[0])
-// log(serializedData[0])
-log(origData[1])
-// log(deserializedData[1])
-log(serializedData[1])
-
-// origData.map((el, i) => {
-//   log(origData[i])
-//   log(deserializedData[i])
-//   log(serializedData[i])
-// })
-// log(
-//   origData,
-//   deserializedData,
-//   // serializedData,
-// )
