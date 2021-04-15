@@ -33,7 +33,7 @@ export type DeserializedNumber = {
   exponent: number;
 }
 
-export const deserialize = ({
+export const serialize = ({
   significand,
   exponent,
 }: DeserializedNumber): SerializedNumber => {
@@ -51,7 +51,7 @@ export const deserialize = ({
     .toString();
 };
 
-export const serialize = (
+export const deserialize = (
   value: SerializedNumber
 ): DeserializedNumber => {
   const resultsArr = [];

@@ -1,7 +1,7 @@
 import {
   normalize,
-  serialize,
   deserialize,
+  serialize,
   trimLeadingZeroes,
   DeserializedNumber,
 } from './decimal';
@@ -92,11 +92,11 @@ describe('decimal', () => {
 
   });
 
-  describe('deserialize', () => {
-    test('deserialize returns string number', () => {
+  describe('serialize', () => {
+    test('serialize returns string number', () => {
       const mockData = createMockData(20);
       const deserializedData = mockData
-        .map(deserialize);
+        .map(serialize);
 
       deserializedData.map((el) => {
         expect(parseInt(el)).toEqual(expect.any(Number));
@@ -104,25 +104,25 @@ describe('decimal', () => {
     });
   });
 
-  describe('serialize', () => {
+  describe('deserialize', () => {
 
-    test('can deserialize then serialize up to 10, including numbers less than 0.1', () => {
+    test('can serialize then deserialize up to 10, including numbers less than 0.1', () => {
       const mockData = allMockData.slice(0,10);
 
       const serializedData = mockData
-        .map(deserialize)
-        .map(serialize);
+        .map(serialize)
+        .map(deserialize);
 
       serializedData.map((el, i) => {
         expect(el).toEqual(mockData[i]);
       });
     });
-    test('can deserialize then serialize index 17 of the mock data, including numbers with e', () => {
+    test('can serialize then deserialize index 17 of the mock data, including numbers with e', () => {
       const mockData = allMockData[17];
 
       const serializedData = [mockData]
-        .map(deserialize)
-        .map(serialize);
+        .map(serialize)
+        .map(deserialize);
 
       expect(serializedData[0]).toEqual(mockData);
     });
