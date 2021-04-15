@@ -87,31 +87,36 @@ const serialize = (
   };
 }
 
-export const normalizeNumber = (value: string): DeserializedNumber  => {
+export const normalizeNumber = (value: string): {
+  significand: string,
+  exponent: string,
+}  => {
   let exponent;
   let significand;
   const splitted = value.split('.');
 
-  // if no splitted[1]
-  // count zeroes
-
+  // if no decimal
   if (splitted.length === 1) {
     const firstNonZeroIndex = splitted[0]
       .split('')
       .reverse()
       .findIndex(char => char !== '0')
 
-    exponent = new Decimal(firstNonZeroIndex);
-    const base = new Decimal(ten).pow(exponent)
-    significand = new Decimal(splitted[0]).div(base);
+    const exponentRaw = new Decimal(firstNonZeroIndex);
+    const base = new Decimal(ten).pow(exponentRaw)
+
+    exponent = exponentRaw.toString()
+    significand = new Decimal(splitted[0]).div(base).toString();
+  }
+  // if decimal
+  else {
+
+    // check if parseInt(splitted[1]) > 0
   }
 
-  // if splitted[1]:
-  // check if parseInt(splitted[1]) > 0
-
   return {
-    significand: new Uint8Array([parseInt(significand)]),
-    exponent: parseInt(exponent),
+    significand: significand,
+    exponent: exponent,
   };
 }
 
