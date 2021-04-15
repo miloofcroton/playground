@@ -24,7 +24,7 @@ Decimal.set({
 const zero = new Decimal(0);
 const one = new Decimal(1);
 const ten = new Decimal(10);
-const _256 = new Decimal(2**8);
+const _256 = new Decimal(256);
 
 type SerializedNumber = string;
 
