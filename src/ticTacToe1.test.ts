@@ -1,4 +1,4 @@
-import { solveTTT } from './tictactoe';
+import { solveTTT } from './ticTacToe';
 
 xdescribe('tictactoe', () => {
   test('a', () => {
