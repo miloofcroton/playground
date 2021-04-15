@@ -91,28 +91,24 @@ export const normalizeNumber = (value: string): {
   significand: string,
   exponent: string,
 }  => {
-  let exponent;
-  let significand;
-  const splitted = value.split('.');
+  const origNum = new Decimal(value);
+  const sigDigs = origNum.precision();
+  const [whole, frac] = value.split('.');
 
-  // if no decimal
-  if (splitted.length === 1) {
-    const firstNonZeroIndex = splitted[0]
-      .split('')
-      .reverse()
-      .findIndex(char => char !== '0')
+  const newNumChars = value
+    .split('')
+    .filter(char => char !== '.')
 
-    const exponentRaw = new Decimal(firstNonZeroIndex);
-    const base = new Decimal(ten).pow(exponentRaw)
+  const significand = parseFloat(value) > 1
+    ? newNumChars.slice(0, sigDigs).join('')
+    : frac.split('').slice(0, sigDigs).join('')
 
-    exponent = exponentRaw.toString()
-    significand = new Decimal(splitted[0]).div(base).toString();
-  }
-  // if decimal
-  else {
+  const originalDecimalLocation = whole.length || 0;
+  const decimalLocationChange = parseFloat(value) > 1
+    ? originalDecimalLocation - significand.length
+    : originalDecimalLocation - significand.concat(whole).length;
 
-    // check if parseInt(splitted[1]) > 0
-  }
+  const exponent = decimalLocationChange.toString()
 
   return {
     significand: significand,
