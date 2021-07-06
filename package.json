@@ -1,6 +1,10 @@
 {
   "name": "playground",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16.4.2",
+    "npm": ">=7.18.1"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "@types/node": "^14.14.39",
